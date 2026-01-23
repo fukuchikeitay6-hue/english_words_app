@@ -87,7 +87,7 @@ class _HomepageState extends State<Homepage> {
                   icon: Icon(Icons.add),
                   onPressed: () async {
                     final String word = _controller.text;
-                    _repo.addWord(Word(word));
+                    await _repo.addWord(Word(word));
                     final list = await _repo.getAllWords();
                     setState(() {  // setStateの中にawaitを書かない
                       words = list;
@@ -102,8 +102,18 @@ class _HomepageState extends State<Homepage> {
               child: ListView.builder(
                 itemCount: words.length,
                 itemBuilder: (context, index) {
+                  final word = words[index];
                   print(words[index].id);
-                  return WordTile(word: words[index]);
+                  return WordTile(
+                    word: word,
+                    onDelete: () async {
+                      await _repo.removeWord(word);
+                      final list = await _repo.getAllWords();
+                      setState(() {
+                        words = list;
+                      });
+                    },
+                  );
                 },
               ),
             )

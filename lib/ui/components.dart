@@ -5,8 +5,13 @@ import 'package:flutter/widget_previews.dart';
 
 class WordTile extends StatefulWidget {
   final Word word;
+  final VoidCallback onDelete;
 
-  const WordTile({super.key, required this.word});
+  const WordTile({
+    super.key, 
+    required this.word,
+    required this.onDelete
+  });
 
   @override
   State<WordTile> createState() => _WordTileState();
@@ -43,7 +48,9 @@ class _WordTileState extends State<WordTile> {
           ),
         ),
         trailing: IconButton(
-          onPressed: () {}, 
+          onPressed: () {
+            widget.onDelete;
+          }, 
           icon: Icon(Icons.delete)
         ),
       ),

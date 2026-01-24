@@ -116,26 +116,19 @@ class _HomepageState extends State<Homepage> {
                   final word = showWords[index];
                   return WordTile(
                     word: word,
-                    onDelete: () async {
-                      await _repo.removeWord(word);
-                      final list = await _repo.getAllWords();
-                      setState(() {
-                        words = list;
-                        setShowWords();
-                      });
-                    },
-                    onAdd: () async {
-                      final String word = _controller.text;
+                    onTap: word.id == null 
+                    ? () async {
+                      final word = _controller.text;
                       await _repo.addWord(Word(word));
-                      final list = await _repo.getAllWords();
                       _controller.clear();
-                      setState(() {  // setStateの中にawaitを書かない
-                        words = list;
-                        setShowWords();
-                      });
-                    },
-                    backPage: (word) async {
-                      await _repo.update(word.copyWith(learnedCount: word.learnedCount+1));
+                      getAllWords();
+                    }
+                    : () async {
+                      await Navigator.push(
+                        context, 
+                        MaterialPageRoute(builder: (context) => WordDetailPage(word: word, repo: _repo,))
+                      );
+                      _repo.update(word.copyWith(learnedCount: word.learnedCount + 1));
                       getAllWords();
                     },
                   );

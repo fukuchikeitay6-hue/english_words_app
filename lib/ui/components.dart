@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:sql2/model/word.dart';
 import 'package:flutter/widget_previews.dart';
+import 'package:sql2/repository/word_repository.dart';
 
 class WordTile extends StatefulWidget {
   final Word word;
-  final VoidCallback onDelete;
-  final VoidCallback onAdd;
-  final Function(Word) backPage;
+  final VoidCallback onTap;
 
   const WordTile({
     super.key, 
     required this.word,
-    required this.onDelete,
-    required this.onAdd,
-    required this.backPage
+    required this.onTap,
   });
 
   @override
@@ -27,13 +24,7 @@ class _WordTileState extends State<WordTile> {
       padding: EdgeInsets.all(2.0),
       child: ListTile(
         shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.all(Radius.circular(8.0))),
-        onTap: widget.word.id == null ? widget.onAdd : () async {
-          await Navigator.push(
-            context, 
-            MaterialPageRoute(builder: (context) => WordDetailPage(word: widget.word))
-          );
-          widget.backPage(widget.word);
-        },
+        onTap: widget.onTap,
         title: Text(
           widget.word.word,
           style: TextStyle(
@@ -64,8 +55,13 @@ class _WordTileState extends State<WordTile> {
 
 class WordDetailPage extends StatefulWidget {
   final Word word;
+  final WordRepository repo;
 
-  const WordDetailPage({super.key, required this.word});
+  const WordDetailPage({
+    super.key, 
+    required this.word, 
+    required this.repo
+  });
 
   @override
   State<WordDetailPage> createState() => _WordDetailPageState();
@@ -164,12 +160,37 @@ class _WordDetailPageState extends State<WordDetailPage> {
                   child: Text('完了')
                 ),
                 SizedBox(width: 20,),
+                // 削除ボタン
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red.shade50,
                     foregroundColor: Colors.red
                   ),
-                  onPressed: () {}, 
+                  onPressed: () async {
+                    final bool? deleteConfirmed = await showDialog<bool>(
+                      context: context, 
+                      builder: (context) => AlertDialog(
+                        title: const Text('削除の確認'),
+                        content: Text('「${widget.word.word}」を削除してもよろしいですか'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false), 
+                            child: const Text('キャンセル')
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, true), 
+                            child: Text('削除', style: TextStyle(color: Colors.red),)
+                          )
+                        ],
+                      )
+                    );
+                    if (deleteConfirmed == true) {
+                      await widget.repo.removeWord(widget.word);
+                      if (mounted) {
+                        Navigator.pop(context, true);
+                      }
+                    }
+                  }, 
                   child: Text('削除')
                 ),
               ],

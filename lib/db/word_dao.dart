@@ -3,7 +3,6 @@ import '../model/word.dart';
 
 // SQLを直接触る
 
-
 class WordDao {
   final Database db;
 
@@ -23,6 +22,15 @@ class WordDao {
       'words',
       where: 'id = ?',
       whereArgs: [id]
+    );
+  }
+
+  Future<void> update(Word word) async {
+    await db.update(
+      'words', 
+      word.toMap(),
+      where: 'id = ?',
+      whereArgs: [word.id]
     );
   }
 }

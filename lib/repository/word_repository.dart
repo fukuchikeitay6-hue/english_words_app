@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../model/word.dart';
 import '../db/word_dao.dart';
 
@@ -19,5 +21,14 @@ class WordRepository {
   Future<void> removeWord(Word word) async {
     if (word.id == null) return;
     await dao.delete(word.id!);
+  }
+
+  Future<void> incrementLearnedCount(Word word) async {
+    if (word.id == null) return;
+    await dao.update(
+      word.copyWith(
+        learnedCount: word.learnedCount + 1
+      )
+    );
   }
 }

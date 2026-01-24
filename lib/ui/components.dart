@@ -48,9 +48,7 @@ class _WordTileState extends State<WordTile> {
           ),
         ),
         trailing: IconButton(
-          onPressed: () {
-            widget.onDelete;
-          }, 
+          onPressed: widget.onDelete,  // 関数を渡す, ()をつけると返り値が渡される
           icon: Icon(Icons.delete)
         ),
       ),

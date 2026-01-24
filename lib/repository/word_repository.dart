@@ -36,8 +36,7 @@ class WordRepository {
   }
 
   Future<void> removeWord(Word word) async {
-    print(word.id);
     if (word.id == null) return;
-    dao.delete(word.id!);
+    await dao.delete(word.id!);
   }
 }

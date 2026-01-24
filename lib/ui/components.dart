@@ -26,10 +26,6 @@ class _WordTileState extends State<WordTile> {
     return Padding(
       padding: EdgeInsets.all(2.0),
       child: ListTile(
-        leading: widget.word.id == null ? null : Text(
-          '${widget.word.learnedCount}',
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.all(Radius.circular(8.0))),
         onTap: widget.word.id == null ? widget.onAdd : () async {
           await Navigator.push(
@@ -57,9 +53,9 @@ class _WordTileState extends State<WordTile> {
         ),
         trailing: widget.word.id == null  // 追加ボタン用
           ? null 
-          : IconButton(
-            onPressed: widget.onDelete,  // 関数を渡す, ()をつけると返り値が渡される
-            icon: Icon(Icons.delete)
+          : Text(
+          '${widget.word.learnedCount}',
+          style: Theme.of(context).textTheme.bodySmall,
         ),
       ),
     );
@@ -158,11 +154,25 @@ class _WordDetailPageState extends State<WordDetailPage> {
               ),
             ),
             Expanded(child: SizedBox()),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              }, 
-              child: Text('完了')
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }, 
+                  child: Text('完了')
+                ),
+                SizedBox(width: 20,),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red.shade50,
+                    foregroundColor: Colors.red
+                  ),
+                  onPressed: () {}, 
+                  child: Text('削除')
+                ),
+              ],
             ),
           ],
         ),

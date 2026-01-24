@@ -118,8 +118,13 @@ class _HomepageState extends State<Homepage> {
                     word: word,
                     onTap: word.id == null 
                     ? () async {
-                      final word = _controller.text;
-                      await _repo.addWord(Word(word));
+                      final text = _controller.text;
+                      final word = Word(text);
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(builder: (context) => NewWordPage(word: word))
+                      );
+                      await _repo.addWord(word);
                       _controller.clear();
                       getAllWords();
                     }

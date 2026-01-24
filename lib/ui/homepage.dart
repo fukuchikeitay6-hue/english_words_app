@@ -20,6 +20,7 @@ class _HomepageState extends State<Homepage> {
   final TextEditingController _controller = TextEditingController();
 
   List<Word> words = [];
+  List<Word> showWords = [];
 
   Future<void> _initDatabase() async {
     final path = join(await getDatabasesPath(), 'database.db');
@@ -40,6 +41,7 @@ class _HomepageState extends State<Homepage> {
     final list = await _repo.getAllWords();
     setState(() {  // setStateの中にawaitを書かない
       words = list;
+      setShowWords();
     });
   }
 
@@ -53,6 +55,20 @@ class _HomepageState extends State<Homepage> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void setShowWords() {
+    final text = _controller.text;
+    if (text.isEmpty) {
+      setState(() {
+        showWords = List.from(words);
+      });
+      return;
+    }
+    final list = words.where((w) => w.word.contains(text)).toList();
+    setState(() {
+      showWords = [...list, Word('$textを追加')];
+    });
   }
 
   @override
@@ -80,30 +96,20 @@ class _HomepageState extends State<Homepage> {
                       label: Text('単語を入力'),
                       border: OutlineInputBorder()
                     ),
+                    onChanged: (value) {
+                      setShowWords();
+                    },
                   )
                   ),
                   SizedBox(width: 16,),
-                IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () async {
-                    final String word = _controller.text;
-                    await _repo.addWord(Word(word));
-                    final list = await _repo.getAllWords();
-                    setState(() {  // setStateの中にawaitを書かない
-                      words = list;
-                    });
-                    _controller.clear();
-                  },
-                ),
               ],
             ),
             SizedBox(height: 8.0,),
             Expanded(
               child: ListView.builder(
-                itemCount: words.length,
+                itemCount: showWords.length,
                 itemBuilder: (context, index) {
-                  final word = words[index];
-                  print(words[index].id);
+                  final word = showWords[index];
                   return WordTile(
                     word: word,
                     onDelete: () async {
@@ -111,6 +117,17 @@ class _HomepageState extends State<Homepage> {
                       final list = await _repo.getAllWords();
                       setState(() {
                         words = list;
+                        setShowWords();
+                      });
+                    },
+                    onAdd: () async {
+                      final String word = _controller.text;
+                      await _repo.addWord(Word(word));
+                      final list = await _repo.getAllWords();
+                      _controller.clear();
+                      setState(() {  // setStateの中にawaitを書かない
+                        words = list;
+                        setShowWords();
                       });
                     },
                   );

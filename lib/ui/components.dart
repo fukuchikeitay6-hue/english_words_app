@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:sql2/model/word.dart';
-import '../repository/word_repository.dart';
 import 'package:flutter/widget_previews.dart';
 
 class WordTile extends StatefulWidget {
   final Word word;
   final VoidCallback onDelete;
+  final VoidCallback onAdd;
 
   const WordTile({
     super.key, 
     required this.word,
-    required this.onDelete
+    required this.onDelete,
+    required this.onAdd
   });
 
   @override
@@ -24,7 +25,7 @@ class _WordTileState extends State<WordTile> {
       padding: EdgeInsets.all(2.0),
       child: ListTile(
         shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.all(Radius.circular(8.0))),
-        onTap: () {
+        onTap: widget.word.id == null ? widget.onAdd : () {
           Navigator.push(
             context, 
             MaterialPageRoute(builder: (context) => WordDetailPage(word: widget.word))
@@ -47,9 +48,11 @@ class _WordTileState extends State<WordTile> {
             color: Color(0xff5f5f5f)
           ),
         ),
-        trailing: IconButton(
-          onPressed: widget.onDelete,  // 関数を渡す, ()をつけると返り値が渡される
-          icon: Icon(Icons.delete)
+        trailing: widget.word.id == null  // 追加ボタン用
+          ? null 
+          : IconButton(
+            onPressed: widget.onDelete,  // 関数を渡す, ()をつけると返り値が渡される
+            icon: Icon(Icons.delete)
         ),
       ),
     );

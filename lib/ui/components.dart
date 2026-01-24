@@ -24,6 +24,10 @@ class _WordTileState extends State<WordTile> {
     return Padding(
       padding: EdgeInsets.all(2.0),
       child: ListTile(
+        leading: Text(
+          '${widget.word.learnedCount}',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.all(Radius.circular(8.0))),
         onTap: widget.word.id == null ? widget.onAdd : () {
           Navigator.push(

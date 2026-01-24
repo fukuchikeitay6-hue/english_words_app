@@ -29,7 +29,7 @@ class _HomepageState extends State<Homepage> {
       version: 1,
       onCreate: (db, version) {
         return db.execute(
-          'create table words(id integer primary key autoincrement, word text, translation text)'
+          'create table words(id integer primary key autoincrement, word text, translation text, learnedCount integer)'
         );
       },
     );

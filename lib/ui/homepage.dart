@@ -120,11 +120,16 @@ class _HomepageState extends State<Homepage> {
                     ? () async {
                       final text = _controller.text;
                       final word = Word(text);
-                      Navigator.push(
+                      final Word? newWord = await Navigator.push(
                         context, 
                         MaterialPageRoute(builder: (context) => NewWordPage(word: word))
                       );
-                      await _repo.addWord(word);
+                      if (newWord == null) {
+                        _controller.clear();
+                        getAllWords();
+                        return;
+                      }
+                      await _repo.addWord(newWord);
                       _controller.clear();
                       getAllWords();
                     }

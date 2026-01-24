@@ -245,6 +245,9 @@ class _NewWordPageState extends State<NewWordPage> {
               ),
               child: TextField(
                 controller: translationController,
+                decoration: InputDecoration(
+                  label: Text('訳を入力')
+                ),
               ),
             ),
             SizedBox(height: 16.0,),
@@ -261,12 +264,18 @@ class _NewWordPageState extends State<NewWordPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: () {}, 
+                  onPressed: () {
+                    final translation = translationController.text;
+                    widget.word.translation = translation;
+                    Navigator.pop(context, widget.word);
+                  }, 
                   child: Text('保存')
                 ),
                 SizedBox(width: 20.0,),
                 ElevatedButton(
-                  onPressed: () {}, 
+                  onPressed: () {
+                    Navigator.pop(context, null);
+                  }, 
                   child: Text('キャンセル')
                 )
               ],

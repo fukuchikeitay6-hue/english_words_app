@@ -6,12 +6,14 @@ class WordTile extends StatefulWidget {
   final Word word;
   final VoidCallback onDelete;
   final VoidCallback onAdd;
+  final Function(Word) backPage;
 
   const WordTile({
     super.key, 
     required this.word,
     required this.onDelete,
-    required this.onAdd
+    required this.onAdd,
+    required this.backPage
   });
 
   @override
@@ -24,16 +26,17 @@ class _WordTileState extends State<WordTile> {
     return Padding(
       padding: EdgeInsets.all(2.0),
       child: ListTile(
-        leading: Text(
+        leading: widget.word.id == null ? null : Text(
           '${widget.word.learnedCount}',
           style: Theme.of(context).textTheme.bodySmall,
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.all(Radius.circular(8.0))),
-        onTap: widget.word.id == null ? widget.onAdd : () {
-          Navigator.push(
+        onTap: widget.word.id == null ? widget.onAdd : () async {
+          await Navigator.push(
             context, 
             MaterialPageRoute(builder: (context) => WordDetailPage(word: widget.word))
           );
+          widget.backPage(widget.word);
         },
         title: Text(
           widget.word.word,
@@ -155,22 +158,13 @@ class _WordDetailPageState extends State<WordDetailPage> {
               ),
             ),
             Expanded(child: SizedBox()),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {}, 
-                  child: Text('保存')
-                ),
-                SizedBox(width: 20,),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }, 
-                  child: Text('キャンセル')
-                )
-              ],
-            )],
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              }, 
+              child: Text('完了')
+            ),
+          ],
         ),
       ),
     );

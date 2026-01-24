@@ -38,11 +38,7 @@ class _HomepageState extends State<Homepage> {
   Future<void> _setup() async {
     await _initDatabase();  // databaseの初期化はawaitしてから
     _repo = WordRepository(WordDao(_database));
-    final list = await _repo.getAllWords();
-    setState(() {  // setStateの中にawaitを書かない
-      words = list;
-      setShowWords();
-    });
+    getAllWords();
   }
 
   @override
@@ -55,6 +51,14 @@ class _HomepageState extends State<Homepage> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void getAllWords() async {
+    final list = await _repo.getAllWords();
+    setState(() {
+      words = list;
+      setShowWords();
+    });
   }
 
   void setShowWords() {
@@ -129,6 +133,10 @@ class _HomepageState extends State<Homepage> {
                         words = list;
                         setShowWords();
                       });
+                    },
+                    backPage: (word) async {
+                      await _repo.update(word.copyWith(learnedCount: word.learnedCount+1));
+                      getAllWords();
                     },
                   );
                 },

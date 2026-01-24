@@ -31,4 +31,9 @@ class WordRepository {
       )
     );
   }
+
+  Future<void> update(Word word) async {
+    if (word.id == null) return;
+    await dao.update(word.copyWith());
+  }
 }

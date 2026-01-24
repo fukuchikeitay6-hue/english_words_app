@@ -1,26 +1,5 @@
 // クラス実装
 
-class Person {
-  int? id;
-  final String name;
-  int age;
-
-  Person({required this.name, required this.age});
-
-  factory Person.fromMap(Map<String, dynamic> map) {
-    return Person(
-      name: map['name'] as String, 
-      age: map['age'] as int
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'age': age,
-    };
-  }
-}
 
 class Word {
   final String word;

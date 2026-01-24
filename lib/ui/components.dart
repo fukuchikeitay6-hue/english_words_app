@@ -244,6 +244,7 @@ class _NewWordPageState extends State<NewWordPage> {
                 color: Colors.grey.shade100
               ),
               child: TextField(
+                autofocus: true,
                 controller: translationController,
                 decoration: InputDecoration(
                   label: Text('訳を入力')

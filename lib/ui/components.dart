@@ -42,11 +42,20 @@ class _WordTileState extends State<WordTile> {
             color: Color(0xff5f5f5f)
           ),
         ),
-        trailing: widget.word.id == null  // 追加ボタン用
+        leading: widget.word.id == null  // 追加ボタン用
           ? null 
           : Text(
           '${widget.word.learnedCount}',
           style: Theme.of(context).textTheme.bodySmall,
+        ),
+        trailing: widget.word.id == null
+        ? null 
+        : Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('追加日: ${widget.word.createdAt.year}/${widget.word.createdAt.month}/${widget.word.createdAt.day}', style: TextStyle(fontSize: 10, color: Colors.grey),),
+            Text('学習日: ${widget.word.learnedAt.year}/${widget.word.learnedAt.month}/${widget.word.learnedAt.day}', style: TextStyle(fontSize: 10, color: Colors.grey),),
+          ],
         ),
       ),
     );
@@ -149,6 +158,15 @@ class _WordDetailPageState extends State<WordDetailPage> {
                 ),
               ),
             ),
+            SizedBox(height: 8,),
+            Row(
+              spacing: 20.0,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('追加日: ${widget.word.createdAt.year}/${widget.word.createdAt.month}/${widget.word.createdAt.day}', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                Text('学習日: ${widget.word.learnedAt.year}/${widget.word.learnedAt.month}/${widget.word.learnedAt.day}', style: TextStyle(fontSize: 12, color: Colors.grey)),
+              ],
+            ),
             Expanded(child: SizedBox()),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -202,7 +220,93 @@ class _WordDetailPageState extends State<WordDetailPage> {
   }
 }
 
-@Preview(name: 'sample')
+class NewWordPage extends StatefulWidget {
+  final Word word;
+
+  const NewWordPage({super.key, required this.word});
+
+  @override
+  State<NewWordPage> createState() => _NewWordPageState();
+}
+
+class _NewWordPageState extends State<NewWordPage> {
+  final TextEditingController translationController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    translationController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text(
+          widget.word.word,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100
+              ),
+              child: TextField(
+                autofocus: true,
+                controller: translationController,
+                decoration: InputDecoration(
+                  label: Text('訳を入力')
+                ),
+              ),
+            ),
+            SizedBox(height: 16.0,),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100
+              ),
+              child: Text('例文入力'),
+            ),
+            Expanded(child: SizedBox()),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    final translation = translationController.text;
+                    widget.word.translation = translation;
+                    Navigator.pop(context, widget.word);
+                  }, 
+                  child: Text('保存')
+                ),
+                SizedBox(width: 20.0,),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, null);
+                  }, 
+                  child: Text('キャンセル')
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+@Preview(name: 'sample', group: 'group')
 Widget preview() {
-  return Text('');
+  return NewWordPage(word: Word('test'));
 }

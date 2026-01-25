@@ -29,7 +29,7 @@ class _HomepageState extends State<Homepage> {
       version: 1,
       onCreate: (db, version) {
         return db.execute(
-          'create table words(id integer primary key autoincrement, word text, translation text, learnedCount integer)'
+          'create table words(id integer primary key autoincrement, word text, translation text, learnedCount integer, createdAt integer, learnedAt integer)'
         );
       },
     );
@@ -79,8 +79,9 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text(
-          'SQL APP2',
+          '英単語帳',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold
@@ -118,8 +119,18 @@ class _HomepageState extends State<Homepage> {
                     word: word,
                     onTap: word.id == null 
                     ? () async {
-                      final word = _controller.text;
-                      await _repo.addWord(Word(word));
+                      final text = _controller.text;
+                      final word = Word(text);
+                      final Word? newWord = await Navigator.push(
+                        context, 
+                        MaterialPageRoute(builder: (context) => NewWordPage(word: word))
+                      );
+                      if (newWord == null) {
+                        _controller.clear();
+                        getAllWords();
+                        return;
+                      }
+                      await _repo.addWord(newWord);
                       _controller.clear();
                       getAllWords();
                     }
@@ -128,7 +139,7 @@ class _HomepageState extends State<Homepage> {
                         context, 
                         MaterialPageRoute(builder: (context) => WordDetailPage(word: word, repo: _repo,))
                       );
-                      _repo.update(word.copyWith(learnedCount: word.learnedCount + 1));
+                      _repo.update(word.copyWith(learnedCount: word.learnedCount + 1, learnedAt: DateTime.now()));
                       getAllWords();
                     },
                   );

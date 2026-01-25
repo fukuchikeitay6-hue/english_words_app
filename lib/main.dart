@@ -12,8 +12,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'sql practice',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.grey)
+        scaffoldBackgroundColor: Colors.white,
+        colorSchemeSeed: Colors.white
       ),
       home: Homepage(),
     );

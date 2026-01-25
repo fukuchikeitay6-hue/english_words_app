@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 import '../model/word.dart';
 import '../db/word_dao.dart';
 

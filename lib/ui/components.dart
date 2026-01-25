@@ -54,7 +54,7 @@ class _WordTileState extends State<WordTile> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('追加日: ${widget.word.createdAt.year}/${widget.word.createdAt.month}/${widget.word.createdAt.day}', style: TextStyle(fontSize: 10, color: Colors.grey),),
-            Text('学習日: ${widget.word.createdAt.year}/${widget.word.createdAt.month}/${widget.word.createdAt.day}', style: TextStyle(fontSize: 10, color: Colors.grey),),  //FIXME: 最終学習日
+            Text('学習日: ${widget.word.learnedAt.year}/${widget.word.learnedAt.month}/${widget.word.learnedAt.day}', style: TextStyle(fontSize: 10, color: Colors.grey),),
           ],
         ),
       ),
@@ -164,7 +164,7 @@ class _WordDetailPageState extends State<WordDetailPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('追加日: ${widget.word.createdAt.year}/${widget.word.createdAt.month}/${widget.word.createdAt.day}', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                Text('学習日: ${widget.word.createdAt.year}/${widget.word.createdAt.month}/${widget.word.createdAt.day}', style: TextStyle(fontSize: 12, color: Colors.grey)),  //FIXME: 学習日を追加
+                Text('学習日: ${widget.word.learnedAt.year}/${widget.word.learnedAt.month}/${widget.word.learnedAt.day}', style: TextStyle(fontSize: 12, color: Colors.grey)),
               ],
             ),
             Expanded(child: SizedBox()),

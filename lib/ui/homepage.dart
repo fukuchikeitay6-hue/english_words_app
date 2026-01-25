@@ -22,6 +22,8 @@ class _HomepageState extends State<Homepage> {
   List<Word> words = [];
   List<Word> showWords = [];
 
+  int currentPageIndex = 0;
+
   Future<void> _initDatabase() async {
     final path = join(await getDatabasesPath(), 'database.db');
     _database = await openDatabase(
@@ -88,67 +90,90 @@ class _HomepageState extends State<Homepage> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      label: Text('単語を入力'),
-                      border: OutlineInputBorder()
+      bottomNavigationBar: NavigationBar(
+        backgroundColor: Colors.grey.shade200,
+        height: 60,
+        selectedIndex: currentPageIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        destinations: <Widget>[
+          NavigationDestination(
+            icon: Icon(Icons.home), 
+            label: 'HOME'
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.text_snippet), 
+            label: 'TEST'
+          )
+        ]
+      ),
+      body: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        label: Text('単語を入力'),
+                        border: OutlineInputBorder()
+                      ),
+                      onChanged: (value) {
+                        setShowWords();
+                      },
+                    )
                     ),
-                    onChanged: (value) {
-                      setShowWords();
-                    },
-                  )
-                  ),
-                  SizedBox(width: 16,),
-              ],
-            ),
-            SizedBox(height: 8.0,),
-            Expanded(
-              child: ListView.builder(
-                itemCount: showWords.length,
-                itemBuilder: (context, index) {
-                  final word = showWords[index];
-                  return WordTile(
-                    word: word,
-                    onTap: word.id == null 
-                    ? () async {
-                      final text = _controller.text;
-                      final word = Word(text);
-                      final Word? newWord = await Navigator.push(
-                        context, 
-                        MaterialPageRoute(builder: (context) => NewWordPage(word: word))
-                      );
-                      if (newWord == null) {
+                    SizedBox(width: 16,),
+                ],
+              ),
+              SizedBox(height: 8.0,),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: showWords.length,
+                  itemBuilder: (context, index) {
+                    final word = showWords[index];
+                    return WordTile(
+                      word: word,
+                      onTap: word.id == null 
+                      ? () async {
+                        final text = _controller.text;
+                        final word = Word(text);
+                        final Word? newWord = await Navigator.push(
+                          context, 
+                          MaterialPageRoute(builder: (context) => NewWordPage(word: word))
+                        );
+                        if (newWord == null) {
+                          _controller.clear();
+                          getAllWords();
+                          return;
+                        }
+                        await _repo.addWord(newWord);
                         _controller.clear();
                         getAllWords();
-                        return;
                       }
-                      await _repo.addWord(newWord);
-                      _controller.clear();
-                      getAllWords();
-                    }
-                    : () async {
-                      await Navigator.push(
-                        context, 
-                        MaterialPageRoute(builder: (context) => WordDetailPage(word: word, repo: _repo,))
-                      );
-                      _repo.update(word.copyWith(learnedCount: word.learnedCount + 1, learnedAt: DateTime.now()));
-                      getAllWords();
-                    },
-                  );
-                },
-              ),
-            )
-          ],
+                      : () async {
+                        await Navigator.push(
+                          context, 
+                          MaterialPageRoute(builder: (context) => WordDetailPage(word: word, repo: _repo,))
+                        );
+                        _repo.update(word.copyWith(learnedCount: word.learnedCount + 1, learnedAt: DateTime.now()));
+                        getAllWords();
+                      },
+                    );
+                  },
+                ),
+              )
+            ],
+          ),
         ),
-      ),
+        Text('test page')
+      ][currentPageIndex],
     );
   }
 }

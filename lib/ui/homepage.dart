@@ -29,7 +29,7 @@ class _HomepageState extends State<Homepage> {
       version: 1,
       onCreate: (db, version) {
         return db.execute(
-          'create table words(id integer primary key autoincrement, word text, translation text, learnedCount integer)'
+          'create table words(id integer primary key autoincrement, word text, translation text, learnedCount integer, createdAt integer)'
         );
       },
     );
@@ -79,8 +79,9 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text(
-          'SQL APP2',
+          '英単語帳',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold

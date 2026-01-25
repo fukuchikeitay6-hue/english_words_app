@@ -42,11 +42,20 @@ class _WordTileState extends State<WordTile> {
             color: Color(0xff5f5f5f)
           ),
         ),
-        trailing: widget.word.id == null  // 追加ボタン用
+        leading: widget.word.id == null  // 追加ボタン用
           ? null 
           : Text(
           '${widget.word.learnedCount}',
           style: Theme.of(context).textTheme.bodySmall,
+        ),
+        trailing: widget.word.id == null
+        ? null 
+        : Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('追加日: ${widget.word.createdAt.year}/${widget.word.createdAt.month}/${widget.word.createdAt.day}', style: TextStyle(fontSize: 10, color: Colors.grey),),
+            Text('学習日: ${widget.word.createdAt.year}/${widget.word.createdAt.month}/${widget.word.createdAt.day}', style: TextStyle(fontSize: 10, color: Colors.grey),),  //FIXME: 最終学習日
+          ],
         ),
       ),
     );
@@ -148,6 +157,15 @@ class _WordDetailPageState extends State<WordDetailPage> {
                   color: Theme.of(context).disabledColor
                 ),
               ),
+            ),
+            SizedBox(height: 8,),
+            Row(
+              spacing: 20.0,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('追加日: ${widget.word.createdAt.year}/${widget.word.createdAt.month}/${widget.word.createdAt.day}', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                Text('学習日: ${widget.word.createdAt.year}/${widget.word.createdAt.month}/${widget.word.createdAt.day}', style: TextStyle(fontSize: 12, color: Colors.grey)),  //FIXME: 学習日を追加
+              ],
             ),
             Expanded(child: SizedBox()),
             Row(

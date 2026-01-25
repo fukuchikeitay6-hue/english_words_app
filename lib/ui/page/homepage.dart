@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:sql2/db/word_dao.dart';
-import '../model/word.dart';
-import '../repository/word_repository.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'components.dart';
+
+import 'testpage.dart';
+import 'newwordpage.dart';
+import 'worddetailpage.dart';
+import '../components/wordtile.dart';
+import '../../db/word_dao.dart';
+import '../../model/word.dart';
+import '../../repository/word_repository.dart';
 
 class Homepage extends StatefulWidget {
 
@@ -172,7 +176,7 @@ class _HomepageState extends State<Homepage> {
             ],
           ),
         ),
-        Text('test page')
+        Testpage(),
       ][currentPageIndex],
     );
   }

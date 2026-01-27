@@ -28,6 +28,8 @@ class _HomepageState extends State<Homepage> {
 
   int currentPageIndex = 0;
 
+  TestPhase testPagePhase = TestPhase.setting;
+
   Future<void> _initDatabase() async {
     final path = join(await getDatabasesPath(), 'database.db');
     _database = await openDatabase(
@@ -98,7 +100,27 @@ class _HomepageState extends State<Homepage> {
         backgroundColor: Colors.grey.shade200,
         height: 60,
         selectedIndex: currentPageIndex,
-        onDestinationSelected: (index) {
+        onDestinationSelected: (index) async {
+          if (testPagePhase == TestPhase.running && index != 1) {
+            final bool? isInterruption = await showDialog<bool>(
+              context: context, 
+              builder: (context) => AlertDialog(
+                title: Text('テスト中断の確認'),
+                content: Text('テストを中断してもいいですか'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false), 
+                    child: Text('キャンセル')
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, true), 
+                    child: Text('中断する')
+                  )
+                ],
+              )
+            );
+            if (isInterruption == false) return;
+          }
           setState(() {
             currentPageIndex = index;
           });
@@ -176,7 +198,12 @@ class _HomepageState extends State<Homepage> {
             ],
           ),
         ),
-        Testpage(words: words),
+        Testpage(
+          words: words,
+          onPhaseChanged: (phase) {
+            testPagePhase = phase;
+          },
+        ),
       ][currentPageIndex],
     );
   }

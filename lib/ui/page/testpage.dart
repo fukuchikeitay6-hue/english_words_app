@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sql2/model/word.dart';
 import '../components/wordtesttile.dart';
-import '../../model/word.dart';
 import './resultspage.dart';
 
 enum TestPhase {
@@ -13,7 +12,9 @@ enum TestPhase {
 class Testpage extends StatefulWidget {
   final List<Word> words;
 
-  const Testpage({super.key, required this.words});
+  final void Function(TestPhase phase)? onPhaseChanged;
+
+  const Testpage({super.key, required this.words, required this.onPhaseChanged});
 
   @override
   State<Testpage> createState() => _TestpageState();
@@ -29,10 +30,15 @@ class _TestpageState extends State<Testpage> {
 
   Word get currentWord => testWords[currentIndex];
 
-  void startTest() {
+  void setPhase(TestPhase newPhase) {
     setState(() {
-      phase = TestPhase.running;
+      phase = newPhase;
     });
+    widget.onPhaseChanged?.call(newPhase);
+  }
+
+  void startTest() {
+    setPhase(TestPhase.running);
   }
 
   void onRemembered(bool remembered) {
@@ -50,9 +56,7 @@ class _TestpageState extends State<Testpage> {
         currentIndex++;
       });
     } else {
-      setState(() {
-        phase = TestPhase.finished;
-      });
+      setPhase(TestPhase.finished);
     }
   }
 
@@ -105,7 +109,28 @@ class _TestpageState extends State<Testpage> {
               Spacer(),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(foregroundColor: Colors.red, backgroundColor: Colors.red.shade50),
-                onPressed: () {}, 
+                onPressed: () async {
+                  final bool? isInterruption = await showDialog<bool>(
+                    context: context, 
+                    builder: (context) => AlertDialog(
+                      title: Text('テストを中断'),
+                      content: Text('テストを中断してもいいですか'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false), 
+                          child: Text('キャンセル')
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true), 
+                          child: Text('中断する')
+                        )
+                      ],
+                    )
+                  );
+                  if (isInterruption == true) {
+                    setPhase(TestPhase.setting);
+                  }
+                }, 
                 child: Text('中断する')
               )
             ],
@@ -128,15 +153,15 @@ class _TestpageState extends State<Testpage> {
               testWords = List.from(words);
               currentIndex = 0;
               results.clear();
-              phase = TestPhase.running;
             });
+            setPhase(TestPhase.running);
           },
           onRetry: () {
             setState(() {
               currentIndex = 0;
               results.clear();
-              phase = TestPhase.running;
             });
+            setPhase(TestPhase.running);
           },
         );
     }

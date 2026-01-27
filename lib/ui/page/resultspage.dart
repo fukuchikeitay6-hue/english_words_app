@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:sql2/model/word.dart';
 import 'package:sql2/ui/components/wordtile.dart';
-import 'package:sql2/ui/page/testpage.dart';
 
 class ResultsPage extends StatelessWidget {
   final List<TestResult> results;

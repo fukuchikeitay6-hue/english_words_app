@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../model/word.dart';
 
-import 'package:flutter/widget_previews.dart';
-
 class WordTestBox extends StatefulWidget {
   final Word word;
   final Function(bool remembered) onAnswered;

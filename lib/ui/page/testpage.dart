@@ -20,12 +20,14 @@ class Testpage extends StatefulWidget {
 }
 
 class _TestpageState extends State<Testpage> {
+  late List<Word> testWords;
+
   TestPhase phase = TestPhase.setting;
 
   int currentIndex = 0;
   List<TestResult> results = [];
 
-  Word get currentWord => widget.words[currentIndex];
+  Word get currentWord => testWords[currentIndex];
 
   void startTest() {
     setState(() {
@@ -34,14 +36,16 @@ class _TestpageState extends State<Testpage> {
   }
 
   void onRemembered(bool remembered) {
-    results.add(
-      TestResult(
-        word: currentWord, 
-        remembered: remembered
-      )
-    );
+    setState(() {
+      results.add(
+        TestResult(
+          word: currentWord, 
+          remembered: remembered
+        )
+      );
+    });
 
-    if (currentIndex < widget.words.length -1) {
+    if (currentIndex < testWords.length -1) {
       setState(() {
         currentIndex++;
       });
@@ -53,47 +57,58 @@ class _TestpageState extends State<Testpage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    testWords = List.from(widget.words);
+  }
+
+  @override
   Widget build(BuildContext context) {
     switch (phase) {
       case TestPhase.running:
         return Padding(
           padding: EdgeInsets.all(8.0),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 8,
-              children: [
-                WordTestBox(
-                  word: currentWord,
-                  onAnswered: (remembered) {
-                    onRemembered(remembered);
-                  },
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Icon(Icons.arrow_back_ios),
-                          Text('覚えてない'),
-                        ],
-                      ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 8,
+            children: [
+              Spacer(),
+              WordTestBox(
+                word: currentWord,
+                onAnswered: (remembered) {
+                  onRemembered(remembered);
+                },
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(Icons.arrow_back_ios),
+                        Text('覚えてない'),
+                      ],
                     ),
-                    Center(child: Text('swipe', textAlign: TextAlign.center,)),
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text('覚えた'),
-                          Icon(Icons.arrow_forward_ios)
-                        ],
-                      ),
+                  ),
+                  Center(child: Text('swipe', textAlign: TextAlign.center,)),
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text('覚えた'),
+                        Icon(Icons.arrow_forward_ios)
+                      ],
                     ),
-                  ],
-                )
-              ],
-            ),
+                  ),
+                ],
+              ),
+              Spacer(),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(foregroundColor: Colors.red, backgroundColor: Colors.red.shade50),
+                onPressed: () {}, 
+                child: Text('中断する')
+              )
+            ],
           ),
         );
 
@@ -106,7 +121,24 @@ class _TestpageState extends State<Testpage> {
       );
 
       case TestPhase.finished:
-        return Text('result');
+        return ResultsPage(
+          results: results,
+          onReview: (words) {
+            setState(() {
+              testWords = List.from(words);
+              currentIndex = 0;
+              results.clear();
+              phase = TestPhase.running;
+            });
+          },
+          onRetry: () {
+            setState(() {
+              currentIndex = 0;
+              results.clear();
+              phase = TestPhase.running;
+            });
+          },
+        );
     }
   }
 }

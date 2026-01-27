@@ -87,7 +87,7 @@ class _WordTestBoxState extends State<WordTestBox> {
                   child: Container(
                     width: double.infinity,
                     color: isTranslationShowed 
-                    ? Colors.grey.shade50
+                    ? Colors.grey.shade100
                     : Colors.grey.shade300,
                     child: isTranslationShowed 
                       ? Center(
@@ -96,7 +96,7 @@ class _WordTestBoxState extends State<WordTestBox> {
                           widget.word.translation,
                           style: TextStyle(
                             fontSize: 32,
-                            color: Colors.grey.shade700
+                            color: Colors.grey.shade900
                           ),
                         )
                       )
@@ -106,6 +106,7 @@ class _WordTestBoxState extends State<WordTestBox> {
                           'ダブルタップで訳を表示',
                           style: TextStyle(
                             fontSize: 16,
+                            color: Colors.grey.shade700
                           ),
                         ),
                       )
@@ -115,7 +116,7 @@ class _WordTestBoxState extends State<WordTestBox> {
                 // example
                 Container(
                   width: double.infinity,
-                  color: Colors.lightGreen.shade50,
+                  color: const Color.from(alpha: 0.5, red: 0.945, green: 0.973, blue: 0.914),
                   child: Center(
                     heightFactor: 2.0,
                     child: Text(

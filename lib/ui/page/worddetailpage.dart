@@ -30,6 +30,7 @@ class _WordDetailPageState extends State<WordDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text(
           widget.word.word,
           style: TextStyle(

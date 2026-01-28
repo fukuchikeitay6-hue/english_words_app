@@ -1,6 +1,5 @@
 // クラス実装
 
-
 class Word {
   final String word;
   String translation;
@@ -57,4 +56,11 @@ class Word {
       learnedAt: learnedAt ?? this.learnedAt,
     );
   }
+}
+
+class TestResult {
+  final Word word;
+  bool remembered;
+
+  TestResult({required this.word, required this.remembered});
 }

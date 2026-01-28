@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:sql2/db/word_dao.dart';
-import '../model/word.dart';
-import '../repository/word_repository.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'components.dart';
+
+import 'testpage.dart';
+import 'newwordpage.dart';
+import 'worddetailpage.dart';
+import '../components/wordtile.dart';
+import '../../db/word_dao.dart';
+import '../../model/word.dart';
+import '../../repository/word_repository.dart';
 
 class Homepage extends StatefulWidget {
 
@@ -23,6 +27,8 @@ class _HomepageState extends State<Homepage> {
   List<Word> showWords = [];
 
   int currentPageIndex = 0;
+
+  TestPhase testPagePhase = TestPhase.setting;
 
   Future<void> _initDatabase() async {
     final path = join(await getDatabasesPath(), 'database.db');
@@ -94,7 +100,27 @@ class _HomepageState extends State<Homepage> {
         backgroundColor: Colors.grey.shade200,
         height: 60,
         selectedIndex: currentPageIndex,
-        onDestinationSelected: (index) {
+        onDestinationSelected: (index) async {
+          if (testPagePhase == TestPhase.running && index != 1) {
+            final bool? isInterruption = await showDialog<bool>(
+              context: context, 
+              builder: (context) => AlertDialog(
+                title: Text('テスト中断の確認'),
+                content: Text('テストを中断してもいいですか'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false), 
+                    child: Text('キャンセル')
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, true), 
+                    child: Text('中断する')
+                  )
+                ],
+              )
+            );
+            if (isInterruption == false) return;
+          }
           setState(() {
             currentPageIndex = index;
           });
@@ -172,7 +198,12 @@ class _HomepageState extends State<Homepage> {
             ],
           ),
         ),
-        Text('test page')
+        Testpage(
+          words: words,
+          onPhaseChanged: (phase) {
+            testPagePhase = phase;
+          },
+        ),
       ][currentPageIndex],
     );
   }

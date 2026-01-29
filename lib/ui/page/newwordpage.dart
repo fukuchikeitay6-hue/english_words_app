@@ -57,8 +57,9 @@ class _NewWordPageState extends State<NewWordPage> {
         }
         if (snapshot.hasError) {
           translationController.text = '';
+        } else {
+          translationController.text = snapshot.data!;
         }
-        translationController.text = snapshot.data!;
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(

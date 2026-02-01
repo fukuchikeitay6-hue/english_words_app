@@ -12,6 +12,20 @@ import '../../db/word_dao.dart';
 import '../../model/word.dart';
 import '../../repository/word_repository.dart';
 
+enum SortMode {
+  alphabet,
+  createdAt,
+  learnedAt,
+  learnedCount
+}
+
+enum SortOrder {
+  /// 昇順
+  ascending,
+  /// 降順
+  descending
+}
+
 class Homepage extends StatefulWidget {
 
   const Homepage({super.key});
@@ -31,6 +45,51 @@ class _HomepageState extends State<Homepage> {
   int currentPageIndex = 0;
 
   TestPhase testPagePhase = TestPhase.setting;
+
+  final Map<String, dynamic> _setting = {
+    'sortMode': SortMode.createdAt,
+    'sortOrder': SortOrder.descending,
+    'showTranslation': true,
+  };
+
+  // ソート機能
+  /// wordsを並び替え
+void sort() {
+  final SortMode mode = _setting['sortMode'];
+  final SortOrder order = _setting['sortOrder'];
+
+  int compare(Word a, Word b) {
+    int result;
+    switch (mode) {
+      case SortMode.alphabet:
+        result = a.word.compareTo(b.word);
+        break;
+      case SortMode.createdAt:
+        result = a.createdAt.compareTo(b.createdAt);
+        break;
+      case SortMode.learnedAt:
+        result = a.learnedAt.compareTo(b.learnedAt);
+        break;
+      case SortMode.learnedCount:
+        result = a.learnedCount.compareTo(b.learnedCount);
+        break;
+    }
+
+    if (order == SortOrder.descending) {
+      result = -result;
+    }
+    return result;
+  }
+
+  words.sort(compare);
+}
+
+
+  //TODO: UIの更新
+  void onSetting() {
+    sort();
+    setShowWords();
+  }
 
   Future<void> _initDatabase() async {
     final path = join(await getDatabasesPath(), 'database.db');
@@ -97,6 +156,75 @@ class _HomepageState extends State<Homepage> {
             fontWeight: FontWeight.bold
           ),
         ),
+        actions: [
+          IconButton(
+                onPressed: () async {
+                  await showDialog(
+                    context: context, 
+                    builder: (context) => StatefulBuilder(
+                      builder: (context, setDialogState) {
+                        return SimpleDialog(
+                          title: Text('設定'),
+                          alignment: Alignment.center,
+                          children: [
+                            Center(
+                              child: DropdownMenu(
+                                requestFocusOnTap: false,
+                                label: Text('表示順'),
+                                initialSelection: _setting['sortMode'],
+                                dropdownMenuEntries: [
+                                  DropdownMenuEntry(value: SortMode.alphabet, label: 'アルファベット順'),
+                                  DropdownMenuEntry(value: SortMode.createdAt, label: '作成日順'),
+                                  DropdownMenuEntry(value: SortMode.learnedAt, label: '学習日順'),
+                                  DropdownMenuEntry(value: SortMode.learnedCount, label: '学習回数順'),
+                                ],
+                                onSelected: (newValue) {
+                                  _setting.update('sortMode', (value) => newValue);
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 20,),
+                            Center(
+                              child: DropdownMenu(
+                                requestFocusOnTap:  false,
+                                label: Text('順序'),
+                                initialSelection: _setting['sortOrder'],
+                                dropdownMenuEntries: [
+                                  DropdownMenuEntry(value: SortOrder.ascending, label: '昇順'),
+                                  DropdownMenuEntry(value: SortOrder.descending, label: '降順')
+                                ],
+                                onSelected: (newValue) {
+                                  _setting.update('sortOrder', (value) => newValue);
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 16,), 
+                            Row(
+                              spacing: 8.0,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('訳を表示'),
+                                Switch(
+                                  value: _setting['showTranslation'], 
+                                  onChanged:(newValue) {
+                                    setDialogState(() {
+                                      _setting.update('showTranslation', (value) => newValue);
+                                    });
+                                  },
+                                ),
+                              ],
+                            )
+                          ],
+                        );
+                      }
+                    )
+                  );
+                  onSetting();
+                }, 
+                icon: Icon(Icons.more_vert),
+              ),
+        ],
+        actionsPadding: EdgeInsets.symmetric(horizontal: 8),
       ),
       bottomNavigationBar: NavigationBar(
         backgroundColor: Colors.grey.shade200,
@@ -142,25 +270,18 @@ class _HomepageState extends State<Homepage> {
         Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        label: Text('単語を入力'),
-                        border: OutlineInputBorder()
-                      ),
-                      onChanged: (value) {
-                        setShowWords();
-                      },
-                    )
-                    ),
-                    SizedBox(width: 16,),
-                ],
+              TextField(
+                controller: _controller,
+                decoration: InputDecoration(
+                  label: Text('単語を入力'),
+                  border: OutlineInputBorder()
+                ),
+                onChanged: (value) {
+                  setShowWords();
+                },
               ),
-              SizedBox(height: 8.0,),
               Expanded(
                 child: ListView.builder(
                   itemCount: showWords.length,

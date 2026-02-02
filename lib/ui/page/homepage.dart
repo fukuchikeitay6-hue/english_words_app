@@ -289,6 +289,7 @@ void sort() {
                     final word = showWords[index];
                     return WordTile(
                       word: word,
+                      showTranslation: _setting['showTranslation'],
                       onTap: word.id == null 
                       ? () async {
                         final text = _controller.text;

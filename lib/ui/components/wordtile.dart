@@ -3,11 +3,13 @@ import '../../model/word.dart';
 
 class WordTile extends StatefulWidget {
   final Word word;
+  final bool showTranslation;
   final VoidCallback onTap;
 
   const WordTile({
     super.key, 
     required this.word,
+    required this.showTranslation,
     required this.onTap,
   });
 
@@ -31,7 +33,7 @@ class _WordTileState extends State<WordTile> {
             color: Color(0xff0f0f0f)
           ),
         ),
-        subtitle: widget.word.translation.isEmpty
+        subtitle: widget.word.translation.isEmpty || !widget.showTranslation
           ? null
           : Text(
           widget.word.translation,

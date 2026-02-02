@@ -50,6 +50,9 @@ class _HomepageState extends State<Homepage> {
     'sortMode': SortMode.createdAt,
     'sortOrder': SortOrder.descending,
     'showTranslation': true,
+    'showCreatedAt': true,
+    'showLearnedAt': true,
+    'showLearnedCount': true
   };
 
   // ソート機能
@@ -107,7 +110,8 @@ void sort() {
   Future<void> _setup() async {
     await _initDatabase();  // databaseの初期化はawaitしてから
     _repo = WordRepository(WordDao(_database));
-    getAllWords();
+    await getAllWords();
+    onSetting();
   }
 
   @override
@@ -122,7 +126,7 @@ void sort() {
     super.dispose();
   }
 
-  void getAllWords() async {
+  Future<void> getAllWords() async {
     final list = await _repo.getAllWords();
     setState(() {
       words = list;
@@ -164,7 +168,7 @@ void sort() {
                     builder: (context) => StatefulBuilder(
                       builder: (context, setDialogState) {
                         return SimpleDialog(
-                          title: Text('設定'),
+                          title: Text('表示設定'),
                           alignment: Alignment.center,
                           children: [
                             Center(
@@ -174,7 +178,7 @@ void sort() {
                                 initialSelection: _setting['sortMode'],
                                 dropdownMenuEntries: [
                                   DropdownMenuEntry(value: SortMode.alphabet, label: 'アルファベット順'),
-                                  DropdownMenuEntry(value: SortMode.createdAt, label: '作成日順'),
+                                  DropdownMenuEntry(value: SortMode.createdAt, label: '追加日順'),
                                   DropdownMenuEntry(value: SortMode.learnedAt, label: '学習日順'),
                                   DropdownMenuEntry(value: SortMode.learnedCount, label: '学習回数順'),
                                 ],
@@ -211,6 +215,51 @@ void sort() {
                                       _setting.update('showTranslation', (value) => newValue);
                                     });
                                   },
+                                ),
+                              ],
+                            ),
+                            Row(
+                              spacing: 8.0,
+                              mainAxisAlignment: .center,
+                              children: [
+                                Text('追加日を表示'),
+                                Switch(
+                                  value: _setting['showCreatedAt'], 
+                                  onChanged: (newValue) {
+                                    setDialogState(() {
+                                      _setting.update('showCreatedAt', (value) => newValue);
+                                    });
+                                  }
+                                )
+                              ],
+                            ),
+                            Row(
+                              spacing: 8.0,
+                              mainAxisAlignment: .center,
+                              children: [
+                                Text('学習日を表示'),
+                                Switch(
+                                  value: _setting['showLearnedAt'], 
+                                  onChanged: (newValue) {
+                                    setDialogState(() {
+                                      _setting.update('showLearnedAt', (value) => newValue);
+                                    });
+                                  }
+                                )
+                              ],
+                            ),
+                            Row(
+                              spacing: 8.0,
+                              mainAxisAlignment: .center,
+                              children: [
+                                Text('学習回数を表示'),
+                                Switch(
+                                  value: _setting['showLearnedCount'], 
+                                  onChanged: (newValue) {
+                                    setDialogState(() {
+                                      _setting.update('showLearnedCount', (value) => newValue);
+                                    });
+                                  }
                                 ),
                               ],
                             )
@@ -290,6 +339,9 @@ void sort() {
                     return WordTile(
                       word: word,
                       showTranslation: _setting['showTranslation'],
+                      showCreatedAt: _setting['showCreatedAt'],
+                      showLearnedAt: _setting['showCreatedAt'],
+                      showLearnedCount: _setting['showLearnedAt'],
                       onTap: word.id == null 
                       ? () async {
                         final text = _controller.text;

@@ -4,12 +4,18 @@ import '../../model/word.dart';
 class WordTile extends StatefulWidget {
   final Word word;
   final bool showTranslation;
+  final bool showCreatedAt;
+  final bool showLearnedAt;
+  final bool showLearnedCount;
   final VoidCallback onTap;
 
   const WordTile({
     super.key, 
     required this.word,
-    required this.showTranslation,
+    this.showTranslation = true,
+    this.showCreatedAt = true,
+    this.showLearnedAt = true,
+    this.showLearnedCount = true,
     required this.onTap,
   });
 
@@ -42,7 +48,7 @@ class _WordTileState extends State<WordTile> {
             color: Color(0xff5f5f5f)
           ),
         ),
-        leading: widget.word.id == null  // 追加ボタン用
+        leading: widget.word.id == null || !widget.showLearnedCount  // 追加ボタン用
           ? null 
           : Text(
           '${widget.word.learnedCount}',
@@ -53,8 +59,8 @@ class _WordTileState extends State<WordTile> {
         : Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('追加日: ${widget.word.createdAt.year}/${widget.word.createdAt.month}/${widget.word.createdAt.day}', style: TextStyle(fontSize: 10, color: Colors.grey),),
-            Text('学習日: ${widget.word.learnedAt.year}/${widget.word.learnedAt.month}/${widget.word.learnedAt.day}', style: TextStyle(fontSize: 10, color: Colors.grey),),
+            widget.showCreatedAt ? Text('追加日: ${widget.word.createdAt.year}/${widget.word.createdAt.month}/${widget.word.createdAt.day}', style: TextStyle(fontSize: 10, color: Colors.grey),) : SizedBox(),
+            widget.showLearnedAt ? Text('学習日: ${widget.word.learnedAt.year}/${widget.word.learnedAt.month}/${widget.word.learnedAt.day}', style: TextStyle(fontSize: 10, color: Colors.grey),) : SizedBox(),
           ],
         ),
       ),

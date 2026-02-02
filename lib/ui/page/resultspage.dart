@@ -47,7 +47,6 @@ class ResultsPage extends StatelessWidget {
                 itemBuilder:(context, index) {
                   return WordTile(
                     word: incorrectWords[index],
-                    showTranslation: true,
                     onTap: (){}
                   );
                 },

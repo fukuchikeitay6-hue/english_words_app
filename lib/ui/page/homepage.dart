@@ -92,6 +92,7 @@ void sort() {
   void onSetting() {
     sort();
     setShowWords();
+
   }
 
   Future<void> _initDatabase() async {
@@ -340,8 +341,8 @@ void sort() {
                       word: word,
                       showTranslation: _setting['showTranslation'],
                       showCreatedAt: _setting['showCreatedAt'],
-                      showLearnedAt: _setting['showCreatedAt'],
-                      showLearnedCount: _setting['showLearnedAt'],
+                      showLearnedAt: _setting['showLearnedAt'],
+                      showLearnedCount: _setting['showLearnedCount'],
                       onTap: word.id == null 
                       ? () async {
                         final text = _controller.text;

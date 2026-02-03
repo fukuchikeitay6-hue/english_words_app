@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 import 'testpage.dart';
 import 'newwordpage.dart';

@@ -31,8 +31,10 @@ class _WordTestBoxState extends State<WordTestBox> {
       onHorizontalDragEnd: (details) {
         if (_offsetX > 100 || details.primaryVelocity! > 500) {
           widget.onAnswered(true);
+          isTranslationShowed = false;
         } else if (_offsetX < -100 || details.primaryVelocity! < -500) {
           widget.onAnswered(false);
+          isTranslationShowed = false;
         }
 
         // ドラッグ完了時の挙動
